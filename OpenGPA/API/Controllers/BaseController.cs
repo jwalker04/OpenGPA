@@ -1,6 +1,7 @@
 ﻿using DAL;
 using System;
 using System.Web.Http;
+using OpenGPA.Helpers;
 
 namespace OpenGPA.API.Controllers
 {
@@ -14,7 +15,7 @@ namespace OpenGPA.API.Controllers
 
         public UnitOfWork()
         {
-            _dataContext = ContextHelper.NewContext();
+            _dataContext = ContextHelper.SetupContext();
         }
 
         public void Dispose()

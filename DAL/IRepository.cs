@@ -1,6 +1,7 @@
 ﻿using DAL.Database;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 
 namespace DAL
@@ -8,31 +9,57 @@ namespace DAL
     public interface IRepository<T> where T : class
     {
         void Add(T item);
-        void Delete(Guid id);
+        void Delete(T item);
+    }
+
+    public class Repository<T> : IRepository<T> where T : class
+    {
+        private DbContext _context;
+        public Repository(DbContext context)
+        {
+            _context = context;
+        }
+
+        public IQueryable<T> FindAll()
+        {
+            return _context.Set<T>();
+        }
+
+        public void Add(T item)
+        {
+            _context.Set<T>().Add(item);
+        }
+
+        public void Delete(T item)
+        {
+            _context.Set<T>().Remove(item);
+        }
     }
 
     public interface IDataContext
     {
         IRepository<T> GetRepository<T>() where T : class;
-        void AddRepository();
+        void AddRepository<T>() where T : class;
     }
 
     public class DataContext : IDataContext
     {
 
         private IDictionary<Type,object> _repositories;
-        //private DataContext _dataContext;
+        private DbContext _context;
 
         public DataContext()
         {
-            //_dataContext = new Test_GPA();
+            _context = new Test_GPA();            
             _repositories = new Dictionary<Type,object>();
         }
         
         // Must create a new repository based on the incoming Type (i.e. ICourse, IAssignment)
-        public void AddRepository()
+        public void AddRepository<T>() where T : class
         {
-            //_repositories.Add();
+            var repo = new Repository<T>(_context);
+
+            _repositories.Add(typeof(T), repo);
         }
 
 
@@ -43,17 +70,6 @@ namespace DAL
                 return (IRepository<T>)_repositories[typeof(T)];
 
             return null;
-        }
-        
-    }
-
-
-
-    public static class ContextHelper
-    {
-        public static IDataContext NewContext()
-        {
-            return new DataContext();
-        }
+        }        
     }
 }

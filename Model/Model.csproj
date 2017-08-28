@@ -45,7 +45,6 @@
     <Compile Include="Interfaces\IAssignmentType.cs" />
     <Compile Include="Interfaces\IAssignment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Repositories\CourseRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DAL\DAL.csproj">
